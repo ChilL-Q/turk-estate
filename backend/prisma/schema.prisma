@@ -1,0 +1,140 @@
+generator client {
+  provider             = "prisma-client-py"
+  interface            = "asyncio"
+  recursive_type_depth = 5
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User and RBAC
+enum Role {
+  SUPER_ADMIN
+  AGENCY_OWNER
+  AGENT
+  USER
+}
+
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String
+  role      Role      @default(USER)
+  firstName String
+  lastName  String
+  phone     String?   @unique
+  
+  agencyId  String?
+  agency    Agency?   @relation(fields: [agencyId], references: [id])
+  
+  listings  Listing[] // Objects listed by this specific agent
+  
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+enum AgencyStatus {
+  PENDING
+  VERIFIED
+  SUSPENDED
+}
+
+model Agency {
+  id            String       @id @default(uuid())
+  name          String
+  vkn           String       @unique // Vergi Kimlik Numarası
+  ttyb          String       @unique // Taşınmaz Ticareti Yetki Belgesi
+  status        AgencyStatus @default(PENDING)
+  
+  users         User[]
+  listings      Listing[]    // Overarching company listings
+  
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+// Turkish Address Hierarchy
+model City {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique // e.g. Istanbul, Antalya
+  districts District[]
+}
+
+model District {
+  id            Int            @id @default(autoincrement())
+  name          String
+  cityId        Int
+  city          City           @relation(fields: [cityId], references: [id])
+  neighborhoods Neighborhood[]
+  
+  @@unique([name, cityId])
+}
+
+model Neighborhood {
+  id         Int       @id @default(autoincrement())
+  name       String
+  districtId Int
+  district   District  @relation(fields: [districtId], references: [id])
+  listings   Listing[]
+  
+  @@unique([name, districtId])
+}
+
+// Specifics of Turkish Real Estate
+enum TapuStatus {
+  KAT_IRTIFAKI
+  KAT_MULKIYETI
+  ARSA_TAPULU
+  HISSELI_TAPU
+}
+
+enum PropertyType {
+  APARTMENT
+  VILLA
+  COMMERCIAL
+  LAND
+}
+
+model Listing {
+  id             String       @id @default(uuid())
+  title          String
+  description    String
+  price          Float
+  currency       String       @default("TRY") // TRY, USD, EUR
+  
+  propertyType   PropertyType
+  
+  // Specific Turkish attributes
+  tapuStatus     TapuStatus
+  iskan          Boolean      @default(false)
+  aidat          Float        @default(0.0)
+  krediyeUygun   Boolean      @default(false)
+  vatandasligaUygun Boolean   @default(false) // Citizenship eligibility
+  
+  // Specs
+  rooms          String       // e.g., "3+1", "2+1"
+  bathrooms      Int          @default(1)
+  netSquareMeters Float
+  grossSquareMeters Float
+  floor          Int
+  totalFloors    Int
+  buildingAge    Int
+  
+  // Location
+  neighborhoodId Int
+  neighborhood   Neighborhood @relation(fields: [neighborhoodId], references: [id])
+  latitude       Float?
+  longitude      Float?
+  
+  // Relations
+  agentId        String
+  agent          User         @relation(fields: [agentId], references: [id])
+  
+  agencyId       String
+  agency         Agency       @relation(fields: [agencyId], references: [id])
+  
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
