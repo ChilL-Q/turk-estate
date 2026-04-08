@@ -1,0 +1,50 @@
+{
+  "nav": {
+    "properties": "Emlak",
+    "agencies": "Acenteler ve Projeler",
+    "login": "Giriş Yap",
+    "pro_panel": "Pro-Panel",
+    "register_agency": "Acente Kaydı"
+  },
+  "home": {
+    "hero_title": "Türkiye'de premium emlak bulun",
+    "buy": "Satılık",
+    "rent": "Kiralık",
+    "investments": "Yatırım",
+    "prop_type": "Emlak Tipi",
+    "rooms": "Oda Sayısı",
+    "location": "İl, İlçe, Mahalle",
+    "search": "Listele",
+    "iskan": "İskanlı",
+    "citizenship": "Vatandaşlığa Uygun",
+    "kat": "Kat Mülkiyetli",
+    "adv_filters": "+ Gelişmiş Filtreler (Aidat, Kat)",
+    "premium_offers": "Premium İlanlar",
+    "view_all": "Tümünü gör",
+    "listed_by": "İlan Sahibi"
+  },
+  "agencies": {
+    "hero_title": "Güvenilir Gayrimenkul Profesyonellerini Bulun",
+    "hero_desc": "TurkEstate, B2B emlak işbirliği için Türkiye'nin önde gelen rehberidir. Burada listelenen her profesyonel titizlikle incelenir ve geçerli bir devlet TTYB lisansına sahiptir.",
+    "search_placeholder": "Acente adına veya konuma göre arayın (örn. İstanbul...)",
+    "search_btn": "Rehberde Ara",
+    "filter_by": "Filtrele",
+    "org_type": "Kurum Türü",
+    "type_agency": "Emlak Acentesi",
+    "type_dev": "Geliştirici / Müteahhit",
+    "type_broker": "Bağımsız Broker",
+    "specialization": "Uzmanlık Alanı",
+    "spec_luxury": "Lüks Villalar",
+    "spec_citizenship": "Vatandaşlık Programları",
+    "spec_commercial": "Ticari ve Arsa",
+    "verified_count": "3 Doğrulanmış Acente",
+    "sort_ttyb": "Sırala: TTYB Doğrulaması",
+    "sort_listings": "Sırala: En Aktif İlanlar",
+    "sort_rating": "Sırala: En Yüksek Puan"
+  },
+  "card": {
+    "active_listings": "Aktif İlan",
+    "agents": "Danışman",
+    "reviews": "değerlendirme"
+  }
+}

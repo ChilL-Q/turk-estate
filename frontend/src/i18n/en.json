@@ -1,0 +1,50 @@
+{
+  "nav": {
+    "properties": "Properties",
+    "agencies": "Agencies & Developers",
+    "login": "Log In",
+    "pro_panel": "Pro-Panel",
+    "register_agency": "Register Agency"
+  },
+  "home": {
+    "hero_title": "Find premium real estate in Türkiye",
+    "buy": "Buy",
+    "rent": "Rent",
+    "investments": "Investments",
+    "prop_type": "Property Type",
+    "rooms": "Rooms",
+    "location": "İl, İlçe, Mahalle",
+    "search": "Find Properties",
+    "iskan": "Iskan (Ready)",
+    "citizenship": "Citizenship Eligible",
+    "kat": "Kat Mülkiyeti",
+    "adv_filters": "+ Advanced Filters (Aidat, Floor)",
+    "premium_offers": "Premium Offers",
+    "view_all": "View all",
+    "listed_by": "Listed by"
+  },
+  "agencies": {
+    "hero_title": "Find Trusted Real Estate Professionals",
+    "hero_desc": "TurkEstate is Türkiye's premier directory for B2B real estate collaboration. Every professional listed here is strictly vetted and holds a valid government TTYB license.",
+    "search_placeholder": "Search by agency name or location (e.g. Istanbul, Elite Brokers...)",
+    "search_btn": "Search Directory",
+    "filter_by": "Filter By",
+    "org_type": "Organization Type",
+    "type_agency": "Real Estate Agency",
+    "type_dev": "Developer / Builder",
+    "type_broker": "Independent Broker",
+    "specialization": "Specialization",
+    "spec_luxury": "Luxury Villas",
+    "spec_citizenship": "Citizenship Programs",
+    "spec_commercial": "Commercial & Land",
+    "verified_count": "3 Verified Agencies",
+    "sort_ttyb": "Sort by: TTYB Verification",
+    "sort_listings": "Sort by: Most Active Listings",
+    "sort_rating": "Sort by: Highest Rating"
+  },
+  "card": {
+    "active_listings": "Active Listings",
+    "agents": "Agents",
+    "reviews": "reviews"
+  }
+}

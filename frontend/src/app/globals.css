@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #F8FAFC; /* slate-50 */
+  --foreground: #0B1426; /* brand-dark */
+}
+
+body {
+  color: var(--foreground);
+  background-color: var(--background);
+  min-height: 100vh;
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-white/90 backdrop-blur-xl border border-slate-200/60 shadow-glass-light rounded-xl;
+  }
+
+  .primary-button {
+    @apply bg-brand-blue text-white font-medium tracking-wide rounded-lg transition-all hover:bg-blue-700 hover:shadow-lg px-6 py-3;
+  }
+}
