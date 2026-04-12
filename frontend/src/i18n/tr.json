@@ -18,7 +18,7 @@
     "iskan": "İskanlı",
     "citizenship": "Vatandaşlığa Uygun",
     "kat": "Kat Mülkiyetli",
-    "adv_filters": "+ Gelişmiş Filtreler (Aidat, Kat)",
+    "adv_filters": "Gelişmiş Filtreler",
     "premium_offers": "Premium İlanlar",
     "view_all": "Tümünü gör",
     "listed_by": "İlan Sahibi"
@@ -37,7 +37,7 @@
     "spec_luxury": "Lüks Villalar",
     "spec_citizenship": "Vatandaşlık Programları",
     "spec_commercial": "Ticari ve Arsa",
-    "verified_count": "3 Doğrulanmış Acente",
+    "verified_count": "Doğrulanmış Acente",
     "sort_ttyb": "Sırala: TTYB Doğrulaması",
     "sort_listings": "Sırala: En Aktif İlanlar",
     "sort_rating": "Sırala: En Yüksek Puan"

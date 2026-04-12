@@ -23,11 +23,19 @@ class AgencyRepository(ABC):
     """
     Handles business-only entities, checking VKN and TTYB.
     """
-    
+
     @abstractmethod
     async def find_by_vkn(self, vkn: str) -> Optional[dict]:
         pass
 
     @abstractmethod
     async def find_by_ttyb(self, ttyb: str) -> Optional[dict]:
+        pass
+
+    @abstractmethod
+    async def create(self, name: str, vkn: str, ttyb: str, email: str) -> dict:
+        pass
+
+    @abstractmethod
+    async def get_all(self, skip: int = 0, take: int = 50) -> List[dict]:
         pass
