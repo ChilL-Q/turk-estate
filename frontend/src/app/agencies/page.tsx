@@ -1,167 +1,369 @@
 "use client";
-import React from 'react';
+
+import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Header from '../../components/Header';
 import { useTranslation } from '../../context/LanguageContext';
+import { type Agency, type AgencyType, getAgencies } from '../../lib/api';
 
-export default function AgenciesPage() {
-  const { t } = useTranslation();
+// ─── Animation variants ───────────────────────────────────────────────────────
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] } },
+};
+const stagger = {
+  hidden: {},
+  show:   { transition: { staggerChildren: 0.09, delayChildren: 0.05 } },
+};
+
+// ─── Type config ──────────────────────────────────────────────────────────────
+const TYPE_CONFIG: Record<AgencyType, {
+  labelRu: string; icon: string; color: string; bg: string; border: string;
+}> = {
+  AGENCY:    { labelRu: 'Агентства недвижимости', icon: '🏢', color: 'text-brand-blue',   bg: 'bg-blue-50',    border: 'border-blue-200' },
+  DEVELOPER: { labelRu: 'Компании-застройщики',   icon: '🏗️', color: 'text-amber-700',   bg: 'bg-amber-50',   border: 'border-amber-200' },
+  REALTOR:   { labelRu: 'Частные риелторы',        icon: '🧑‍💼', color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200' },
+};
+
+const TYPE_ORDER: AgencyType[] = ['AGENCY', 'DEVELOPER', 'REALTOR'];
+
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
+function SkeletonAgency() {
+  return (
+    <div className="bg-white border border-slate-200 rounded-2xl p-6 flex gap-5">
+      <div className="skeleton w-20 h-20 rounded-xl flex-shrink-0" />
+      <div className="flex-1 flex flex-col gap-3 pt-1">
+        <div className="skeleton h-5 w-48 rounded" />
+        <div className="skeleton h-3 w-32 rounded" />
+        <div className="skeleton h-3 w-full rounded" />
+        <div className="skeleton h-3 w-4/5 rounded" />
+      </div>
+    </div>
+  );
+}
+
+// ─── Agency card ──────────────────────────────────────────────────────────────
+function AgencyCard({ agency }: { agency: Agency }) {
+  const initials = agency.name.split(' ').slice(0, 2).map((w) => w[0]).join('').toUpperCase();
+  const cfg = TYPE_CONFIG[agency.agencyType];
 
   return (
-    <div className="min-h-screen bg-slate-50 font-[family-name:var(--font-geist-sans)] selection:bg-brand-blue/20">
-      
+    <motion.div variants={fadeUp}
+      className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm card-hover
+                 flex flex-col sm:flex-row gap-5 group cursor-pointer">
+      <div className={`w-20 h-20 ${cfg.bg} border ${cfg.border} rounded-xl flex items-center justify-center
+                       font-extrabold text-2xl shrink-0 group-hover:shadow-md transition-all duration-300`}>
+        <span className={cfg.color}>{initials}</span>
+      </div>
+
+      <div className="flex-1 min-w-0">
+        <div className="flex justify-between items-start gap-3 mb-1 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3 className="text-lg font-bold text-brand-dark">{agency.name}</h3>
+            {agency.status === 'VERIFIED' && (
+              <svg className="w-5 h-5 text-brand-blue flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+            )}
+          </div>
+          {agency.status === 'VERIFIED' ? (
+            <span className="flex-shrink-0 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full text-[10px] font-extrabold tracking-widest uppercase border border-emerald-200">TTYB ✓</span>
+          ) : (
+            <span className="flex-shrink-0 bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full text-[10px] font-extrabold tracking-widest uppercase border border-amber-200">PENDING</span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2 text-[12px] text-slate-500 mb-2 flex-wrap">
+          {agency.city && (
+            <>
+              <span className="flex items-center gap-1">
+                <svg className="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                {agency.city}
+              </span>
+              <span className="text-slate-300">·</span>
+            </>
+          )}
+          {agency.email && <span>{agency.email}</span>}
+        </div>
+
+        {agency.description && (
+          <p className="text-[13px] text-slate-600 leading-relaxed line-clamp-2 mb-3">{agency.description}</p>
+        )}
+
+        <div className="flex flex-wrap gap-3 pt-3 border-t border-slate-100 text-[12px]">
+          <span className="text-slate-400">TTYB: <span className="font-bold text-brand-dark">{agency.ttyb}</span></span>
+          <span className="text-slate-400">VKN: <span className="font-bold text-brand-dark">{agency.vkn}</span></span>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── Type Section ─────────────────────────────────────────────────────────────
+function TypeSection({ type, agencies }: { type: AgencyType; agencies: Agency[] }) {
+  const cfg = TYPE_CONFIG[type];
+  if (agencies.length === 0) return null;
+
+  return (
+    <section className="mb-12">
+      <motion.div variants={fadeUp}
+        className={`flex items-center gap-4 mb-5 pb-4 border-b-2 ${cfg.border}`}>
+        <div className={`w-11 h-11 ${cfg.bg} border ${cfg.border} rounded-xl flex items-center justify-center text-2xl flex-shrink-0`}>
+          {cfg.icon}
+        </div>
+        <div>
+          <h2 className={`text-2xl font-extrabold ${cfg.color}`}>{cfg.labelRu}</h2>
+          <p className="text-xs text-slate-400 font-medium mt-0.5">
+            {agencies.length}&nbsp;{agencies.length === 1 ? 'организация' : agencies.length < 5 ? 'организации' : 'организаций'}
+          </p>
+        </div>
+      </motion.div>
+
+      <motion.div variants={stagger} initial="hidden" animate="show" className="flex flex-col gap-4">
+        {agencies.map((agency) => <AgencyCard key={agency.id} agency={agency} />)}
+      </motion.div>
+    </section>
+  );
+}
+
+// ─── Filter chip ──────────────────────────────────────────────────────────────
+function FilterChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button onClick={onClick}
+      className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold border transition-all duration-200 whitespace-nowrap ${
+        active
+          ? 'bg-brand-blue text-white border-brand-blue shadow-md'
+          : 'bg-white text-slate-600 border-slate-200 hover:border-brand-blue hover:text-brand-blue'
+      }`}>
+      {children}
+    </button>
+  );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+export default function AgenciesPage() {
+  const { t } = useTranslation();
+  const [agencies, setAgencies]       = useState<Agency[]>([]);
+  const [search, setSearch]           = useState('');
+  const [activeType, setActiveType]   = useState<AgencyType | 'ALL'>('ALL');
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
+  const [cityFilter, setCityFilter]   = useState('');
+  const [loading, setLoading]         = useState(true);
+
+  useEffect(() => {
+    getAgencies().then(setAgencies).catch(() => {}).finally(() => setLoading(false));
+  }, []);
+
+  // Unique cities from loaded agencies
+  const cities = Array.from(new Set(agencies.map(a => a.city).filter(Boolean) as string[])).sort();
+
+  // Active filter count (for badge)
+  const filterCount = [
+    activeType !== 'ALL', verifiedOnly, !!cityFilter,
+  ].filter(Boolean).length;
+
+  const resetFilters = () => {
+    setActiveType('ALL'); setVerifiedOnly(false); setCityFilter(''); setSearch('');
+  };
+
+  const filtered = agencies.filter((a) => {
+    const q = search.toLowerCase();
+    const matchSearch = !search || a.name.toLowerCase().includes(q) || (a.city ?? '').toLowerCase().includes(q) || (a.description ?? '').toLowerCase().includes(q);
+    const matchType   = activeType === 'ALL' || a.agencyType === activeType;
+    const matchVerify = !verifiedOnly || a.status === 'VERIFIED';
+    const matchCity   = !cityFilter   || a.city === cityFilter;
+    return matchSearch && matchType && matchVerify && matchCity;
+  });
+
+  const grouped = TYPE_ORDER.reduce<Record<AgencyType, Agency[]>>((acc, type) => {
+    acc[type] = filtered.filter((a) => a.agencyType === type);
+    return acc;
+  }, { AGENCY: [], DEVELOPER: [], REALTOR: [] });
+
+  const totalCount = filtered.length;
+
+  return (
+    <div className="min-h-screen bg-brand-light font-[family-name:var(--font-geist-sans)] selection:bg-brand-blue/20">
       <Header />
 
-      {/* Hero */}
-      <section className="bg-brand-dark text-white py-16 px-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-blue/20 to-transparent pointer-events-none"></div>
-        <div className="max-w-7xl mx-auto relative z-10">
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">{t('agencies.hero_title')}</h1>
-          <p className="text-lg text-slate-400 mb-8 max-w-2xl leading-relaxed">
-            {t('agencies.hero_desc')}
-          </p>
+      {/* ── Hero ──────────────────────────────────────────────────────────────── */}
+      <section className="relative bg-brand-dark text-white py-16 px-6 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="blob absolute -top-16 left-1/4 w-96 h-96 rounded-full bg-brand-blue/15 blur-3xl" />
+          <div className="blob blob-delay-2 absolute top-8 right-1/3 w-64 h-64 rounded-full bg-indigo-600/10 blur-3xl" />
+        </div>
 
-          <div className="flex flex-col md:flex-row gap-4 max-w-4xl">
-            <input 
-              type="text" 
-              placeholder={t('agencies.search_placeholder')}
-              className="px-6 py-4 w-full md:w-2/3 rounded-xl text-brand-dark font-medium outline-none focus:ring-4 focus:ring-brand-blue/50 shadow-lg"
-            />
-            <button className="primary-button md:w-1/3 py-4 text-lg shadow-lg hover:shadow-xl flex justify-center items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+        <div className="max-w-5xl mx-auto relative z-10">
+          <motion.h1 variants={fadeUp} initial="hidden" animate="show"
+            className="text-4xl md:text-5xl font-extrabold mb-3 tracking-tight">
+            {t('agencies.hero_title')}
+          </motion.h1>
+          <motion.p variants={fadeUp} initial="hidden" animate="show" transition={{ delay: 0.1 }}
+            className="text-slate-400 mb-8 max-w-2xl leading-relaxed">
+            {t('agencies.hero_desc')}
+          </motion.p>
+
+          {/* Search */}
+          <motion.div variants={fadeUp} initial="hidden" animate="show" transition={{ delay: 0.18 }}
+            className="flex flex-col md:flex-row gap-3 max-w-2xl">
+            <div className="relative flex-1">
+              <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
+                placeholder={t('agencies.search_placeholder')}
+                className="w-full pl-11 pr-5 py-3.5 rounded-xl text-brand-dark font-medium outline-none
+                           focus:ring-4 focus:ring-brand-blue/40 shadow-lg text-sm" />
+            </div>
+            <button className="primary-button px-7 py-3.5 text-sm whitespace-nowrap shadow-lg">
               {t('agencies.search_btn')}
             </button>
-          </div>
+          </motion.div>
+
+          {/* Stats strip */}
+          {!loading && (
+            <motion.div variants={fadeUp} initial="hidden" animate="show" transition={{ delay: 0.28 }}
+              className="flex flex-wrap gap-6 mt-8 text-sm">
+              {TYPE_ORDER.map((type) => {
+                const cfg = TYPE_CONFIG[type];
+                const count = agencies.filter(a => a.agencyType === type).length;
+                return (
+                  <div key={type} className="flex items-center gap-2 text-slate-300">
+                    <span>{cfg.icon}</span>
+                    <span className="font-bold text-white">{count}</span>
+                    <span>{cfg.labelRu}</span>
+                  </div>
+                );
+              })}
+            </motion.div>
+          )}
         </div>
       </section>
 
-      {/* Directory Content */}
-      <main className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-4 gap-8">
-        
-        {/* Sidebar Filters */}
-        <div className="lg:col-span-1 hidden lg:block">
-          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm sticky top-24">
-            <h3 className="font-bold text-brand-dark mb-4 border-b border-slate-100 pb-3 text-lg">{t('agencies.filter_by')}</h3>
-            
-            <div>
-              <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-widest mb-3">{t('agencies.specialization')}</h4>
-              <div className="flex flex-col gap-3 text-sm text-slate-700 font-medium">
-                <label className="flex items-center gap-2 cursor-pointer hover:text-brand-blue transition">
-                  <input type="checkbox" className="rounded text-brand-blue focus:ring-brand-blue w-4 h-4" /> {t('agencies.spec_luxury')}
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer hover:text-brand-blue transition">
-                  <input type="checkbox" className="rounded text-brand-blue focus:ring-brand-blue w-4 h-4" /> {t('agencies.spec_citizenship')}
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer hover:text-brand-blue transition">
-                  <input type="checkbox" className="rounded text-brand-blue focus:ring-brand-blue w-4 h-4" /> {t('agencies.spec_commercial')}
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* ── Filter bar ────────────────────────────────────────────────────────── */}
+      <div className="sticky top-[64px] z-30 bg-white border-b border-slate-200 shadow-sm">
+        <div className="max-w-5xl mx-auto px-6 py-3 flex flex-wrap items-center gap-3">
 
-        {/* List of Realtors */}
-        <div className="lg:col-span-3 flex flex-col gap-5">
-          <div className="flex justify-between items-center mb-2">
-            <h2 className="text-xl font-extrabold text-brand-dark">{t('agencies.verified_count')}</h2>
-            <select className="bg-white border border-slate-200 text-sm font-semibold text-brand-dark rounded-lg py-2 px-3 outline-none cursor-pointer shadow-sm">
-              <option>{t('agencies.sort_listings')}</option>
-              <option>{t('agencies.sort_rating')}</option>
+          {/* Type chips */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <FilterChip active={activeType === 'ALL'} onClick={() => setActiveType('ALL')}>
+              Все типы
+            </FilterChip>
+            {TYPE_ORDER.map((type) => {
+              const cfg = TYPE_CONFIG[type];
+              const count = agencies.filter(a => a.agencyType === type).length;
+              return (
+                <FilterChip key={type} active={activeType === type} onClick={() => setActiveType(activeType === type ? 'ALL' : type)}>
+                  {cfg.icon} {cfg.labelRu}
+                  <span className={`ml-1 text-[11px] font-bold px-1.5 py-0.5 rounded-full ${
+                    activeType === type ? 'bg-white/20' : 'bg-slate-100 text-slate-500'
+                  }`}>{count}</span>
+                </FilterChip>
+              );
+            })}
+          </div>
+
+          <div className="h-5 w-px bg-slate-200 hidden lg:block" />
+
+          {/* City select */}
+          {cities.length > 0 && (
+            <select value={cityFilter} onChange={(e) => setCityFilter(e.target.value)}
+              className={`px-3 py-2 rounded-xl text-sm font-semibold border outline-none cursor-pointer transition ${
+                cityFilter
+                  ? 'bg-brand-blue text-white border-brand-blue'
+                  : 'bg-white text-slate-600 border-slate-200 hover:border-brand-blue'
+              }`}>
+              <option value="">Все города</option>
+              {cities.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
-          </div>
+          )}
 
-          <h3 className="text-2xl font-bold text-brand-dark mt-4 mb-4">{t('agencies.type_agency')}</h3>
-          {/* Agency Card 1 */}
-          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-soft hover:border-slate-300 transition cursor-pointer flex flex-col sm:flex-row gap-6 group">
-            <div className="w-24 h-24 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center font-extrabold text-brand-blue/30 text-3xl shrink-0 group-hover:border-brand-blue/30 transition">
-              EB
+          {/* Verified only toggle */}
+          <label className="flex items-center gap-2 cursor-pointer select-none group ml-1">
+            <div onClick={() => setVerifiedOnly(!verifiedOnly)}
+              className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all flex-shrink-0 ${
+                verifiedOnly ? 'bg-emerald-500 border-emerald-500' : 'border-slate-300 group-hover:border-emerald-500'
+              }`}>
+              {verifiedOnly && (
+                <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" />
+                </svg>
+              )}
             </div>
-            <div className="flex-1">
-              <div className="flex justify-between items-start gap-4 mb-2">
-                <div>
-                  <h3 className="text-xl font-bold text-brand-dark flex items-center gap-2">
-                    Elite Brokers Turkey
-                    <svg className="w-5 h-5 text-brand-blue" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                  </h3>
-                  <div className="text-sm text-slate-500 font-medium mt-0.5">Анталья, Аланья • {t('agencies.type_agency')}</div>
-                </div>
-                <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded text-[10px] font-extrabold tracking-widest uppercase border border-emerald-100">
-                  TTYB ✓ 
-                </div>
-              </div>
-              <p className="text-sm text-slate-600 mb-4 leading-relaxed line-clamp-2">
-                Специализируемся на элитных средиземноморских виллах и высокодоходной инвестиционной недвижимости. Мы предлагаем полное юридическое сопровождение по программе получения гражданства Турции за инвестиции.
-              </p>
-              <div className="flex flex-wrap gap-4 text-sm font-semibold border-t border-slate-100 pt-4">
-                <div className="text-brand-dark flex items-center gap-1.5 border-r border-slate-200 pr-4">342 <span className="text-slate-400 font-medium">{t('card.active_listings')}</span></div>
-                <div className="text-brand-dark flex items-center gap-1.5 border-r border-slate-200 pr-4">15 <span className="text-slate-400 font-medium">{t('card.agents')}</span></div>
-                <div className="text-amber-500 flex items-center gap-1">★ 4.9 <span className="text-slate-400 font-medium">(120 {t('card.reviews')})</span></div>
-              </div>
-            </div>
-          </div>
+            <span className="text-sm font-semibold text-slate-600 group-hover:text-emerald-600 transition">TTYB ✓ Только верифицированные</span>
+          </label>
 
-          <h3 className="text-2xl font-bold text-brand-dark mt-6 mb-4">{t('agencies.type_dev')}</h3>
-          {/* Agency Card 2 */}
-          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-soft hover:border-slate-300 transition cursor-pointer flex flex-col sm:flex-row gap-6 group">
-            <div className="w-24 h-24 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center font-extrabold text-brand-blue/30 text-3xl shrink-0 group-hover:border-brand-blue/30 transition">
-              TR
-            </div>
-            <div className="flex-1">
-              <div className="flex justify-between items-start gap-4 mb-2">
-                <div>
-                  <h3 className="text-xl font-bold text-brand-dark flex items-center gap-2">
-                    TrustRealty Istanbul
-                    <svg className="w-5 h-5 text-brand-blue" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                  </h3>
-                  <div className="text-sm text-slate-500 font-medium mt-0.5">Стамбул, Кадыкёй • {t('agencies.type_dev')}</div>
-                </div>
-                <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded text-[10px] font-extrabold tracking-widest uppercase border border-emerald-100">
-                  TTYB ✓ 
-                </div>
-              </div>
-              <p className="text-sm text-slate-600 mb-4 leading-relaxed line-clamp-2">
-                Ведущий застройщик и брокер Стамбула. Мы связываем глобальных B2B-партнеров и состоятельных частных лиц с эксклюзивными квартирами Kat Mülkiyeti в центре города.
-              </p>
-              <div className="flex flex-wrap gap-4 text-sm font-semibold border-t border-slate-100 pt-4">
-                <div className="text-brand-dark flex items-center gap-1.5 border-r border-slate-200 pr-4">1,240 <span className="text-slate-400 font-medium">{t('card.active_listings')}</span></div>
-                <div className="text-brand-dark flex items-center gap-1.5 border-r border-slate-200 pr-4">85 <span className="text-slate-400 font-medium">{t('card.agents')}</span></div>
-                <div className="text-amber-500 flex items-center gap-1">★ 4.8 <span className="text-slate-400 font-medium">(450 {t('card.reviews')})</span></div>
-              </div>
-            </div>
-          </div>
-
-          <h3 className="text-2xl font-bold text-brand-dark mt-6 mb-4">{t('agencies.type_broker')}</h3>
-          {/* Agency Card 3 */}
-          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-soft hover:border-slate-300 transition cursor-pointer flex flex-col sm:flex-row gap-6 group">
-            <div className="w-24 h-24 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center font-extrabold text-brand-blue/30 text-3xl shrink-0 group-hover:border-brand-blue/30 transition">
-              IR
-            </div>
-            <div className="flex-1">
-              <div className="flex justify-between items-start gap-4 mb-2">
-                <div>
-                  <h3 className="text-xl font-bold text-brand-dark flex items-center gap-2">
-                    Independent Realtor
-                    <svg className="w-5 h-5 text-brand-blue" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                  </h3>
-                  <div className="text-sm text-slate-500 font-medium mt-0.5">Измир, Чешме • {t('agencies.type_broker')}</div>
-                </div>
-                <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded text-[10px] font-extrabold tracking-widest uppercase border border-emerald-100">
-                  TTYB ✓ 
-                </div>
-              </div>
-              <p className="text-sm text-slate-600 mb-4 leading-relaxed line-clamp-2">
-                Эксклюзивные объекты на Эгейском побережье. Индивидуальный подход к подбору недвижимости для жизни и инвестиций от частного эксперта с 10-летним стажем.
-              </p>
-              <div className="flex flex-wrap gap-4 text-sm font-semibold border-t border-slate-100 pt-4">
-                <div className="text-brand-dark flex items-center gap-1.5 border-r border-slate-200 pr-4">42 <span className="text-slate-400 font-medium">{t('card.active_listings')}</span></div>
-                <div className="text-brand-dark flex items-center gap-1.5 border-r border-slate-200 pr-4">1 <span className="text-slate-400 font-medium">{t('card.agents')}</span></div>
-                <div className="text-amber-500 flex items-center gap-1">★ 5.0 <span className="text-slate-400 font-medium">(84 {t('card.reviews')})</span></div>
-              </div>
-            </div>
-          </div>
-
+          {/* Reset */}
+          {filterCount > 0 && (
+            <button onClick={resetFilters}
+              className="ml-auto flex items-center gap-1.5 text-sm font-semibold text-red-500 hover:text-red-700 transition">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Сбросить
+              <span className="bg-red-100 text-red-500 text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                {filterCount}
+              </span>
+            </button>
+          )}
         </div>
-      </main>
+      </div>
 
+      {/* ── Content ───────────────────────────────────────────────────────────── */}
+      <main className="max-w-5xl mx-auto px-6 py-10">
+
+        {/* Result count */}
+        <div className="flex justify-between items-center mb-6">
+          <p className="text-slate-500 text-sm">
+            {search
+              ? <>По запросу <span className="font-bold text-brand-dark">«{search}»</span>: </>
+              : null}
+            <span className="font-bold text-brand-dark">{totalCount}</span>{' '}
+            {totalCount === 1 ? 'организация' : totalCount < 5 ? 'организации' : 'организаций'}
+          </p>
+          <select className="bg-white border border-slate-200 text-sm font-semibold text-brand-dark
+                             rounded-xl py-2 px-3 outline-none cursor-pointer shadow-sm hover:bg-slate-50 transition">
+            <option>{t('agencies.sort_listings')}</option>
+            <option>{t('agencies.sort_rating')}</option>
+          </select>
+        </div>
+
+        {/* Skeleton */}
+        {loading && (
+          <div className="flex flex-col gap-4">
+            {Array.from({ length: 5 }).map((_, i) => <SkeletonAgency key={i} />)}
+          </div>
+        )}
+
+        {/* Empty */}
+        {!loading && totalCount === 0 && (
+          <div className="text-center py-24 text-slate-400">
+            <div className="text-5xl mb-4">{search ? '🔍' : '🏢'}</div>
+            <p className="text-lg font-semibold text-slate-600">
+              {search ? 'Ничего не найдено' : 'Организации ещё не добавлены'}
+            </p>
+            {(search || filterCount > 0) && (
+              <button onClick={resetFilters} className="mt-3 text-sm text-brand-blue font-semibold hover:underline">
+                Сбросить все фильтры
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Grouped list */}
+        {!loading && totalCount > 0 && (
+          <motion.div variants={stagger} initial="hidden" animate="show">
+            {TYPE_ORDER.map((type) => (
+              <TypeSection key={type} type={type} agencies={grouped[type]} />
+            ))}
+          </motion.div>
+        )}
+      </main>
     </div>
   );
 }

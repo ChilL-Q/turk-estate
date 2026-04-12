@@ -18,7 +18,7 @@
     "iskan": "Iskan (Ready)",
     "citizenship": "Citizenship Eligible",
     "kat": "Kat Mülkiyeti",
-    "adv_filters": "+ Advanced Filters (Aidat, Floor)",
+    "adv_filters": "Advanced Filters",
     "premium_offers": "Premium Offers",
     "view_all": "View all",
     "listed_by": "Listed by"
@@ -37,7 +37,7 @@
     "spec_luxury": "Luxury Villas",
     "spec_citizenship": "Citizenship Programs",
     "spec_commercial": "Commercial & Land",
-    "verified_count": "3 Verified Agencies",
+    "verified_count": "Verified Agencies",
     "sort_ttyb": "Sort by: TTYB Verification",
     "sort_listings": "Sort by: Most Active Listings",
     "sort_rating": "Sort by: Highest Rating"

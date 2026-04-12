@@ -41,16 +41,27 @@ enum AgencyStatus {
   SUSPENDED
 }
 
+enum AgencyType {
+  REALTOR    // Частный риелтор
+  AGENCY     // Агентство недвижимости
+  DEVELOPER  // Компания-застройщик
+}
+
 model Agency {
   id            String       @id @default(uuid())
   name          String
   vkn           String       @unique // Vergi Kimlik Numarası
   ttyb          String       @unique // Taşınmaz Ticareti Yetki Belgesi
   status        AgencyStatus @default(PENDING)
-  
+  agencyType    AgencyType   @default(AGENCY)
+  email         String?
+  phone         String?
+  description   String?
+  city          String?
+
   users         User[]
   listings      Listing[]    // Overarching company listings
-  
+
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 }
