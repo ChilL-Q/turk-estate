@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import Header from '../../components/Header';
 import { useTranslation } from '../../context/LanguageContext';
@@ -48,9 +49,10 @@ function AgencyCard({ agency }: { agency: Agency }) {
   const cfg = TYPE_CONFIG[agency.agencyType];
 
   return (
-    <motion.div variants={fadeUp}
+    <motion.div variants={fadeUp}>
+    <Link href={`/agencies/${agency.id}`}
       className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm card-hover
-                 flex flex-col sm:flex-row gap-5 group cursor-pointer">
+                 flex flex-col sm:flex-row gap-5 group cursor-pointer block">
       <div className={`w-20 h-20 ${cfg.bg} border ${cfg.border} rounded-xl flex items-center justify-center
                        font-extrabold text-2xl shrink-0 group-hover:shadow-md transition-all duration-300`}>
         <span className={cfg.color}>{initials}</span>
@@ -96,8 +98,10 @@ function AgencyCard({ agency }: { agency: Agency }) {
         <div className="flex flex-wrap gap-3 pt-3 border-t border-slate-100 text-[12px]">
           <span className="text-slate-400">TTYB: <span className="font-bold text-brand-dark">{agency.ttyb}</span></span>
           <span className="text-slate-400">VKN: <span className="font-bold text-brand-dark">{agency.vkn}</span></span>
+          <span className="ml-auto text-brand-blue font-semibold group-hover:underline">Подробнее →</span>
         </div>
       </div>
+    </Link>
     </motion.div>
   );
 }

@@ -27,6 +27,14 @@ async def list_agencies(repo: PrismaAgencyRepository = Depends(get_agency_repo))
     return await repo.get_all()
 
 
+@router.get("/{agency_id}", response_model=Dict[str, Any])
+async def get_agency(agency_id: str, repo: PrismaAgencyRepository = Depends(get_agency_repo)):
+    agency = await repo.get_by_id(agency_id)
+    if not agency:
+        raise HTTPException(status_code=404, detail="Agency not found")
+    return agency
+
+
 @router.post("/register", response_model=Dict[str, Any])
 async def register_agency(
     req: AgencyRegistrationRequest,

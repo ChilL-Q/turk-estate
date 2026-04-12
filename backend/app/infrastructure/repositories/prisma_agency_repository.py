@@ -26,3 +26,7 @@ class PrismaAgencyRepository(AgencyRepository):
     async def get_all(self, skip: int = 0, take: int = 50) -> List[dict]:
         agencies = await self.db.agency.find_many(skip=skip, take=take, order={"createdAt": "desc"})
         return [a.model_dump() for a in agencies]
+
+    async def get_by_id(self, agency_id: str) -> Optional[dict]:
+        agency = await self.db.agency.find_unique(where={"id": agency_id})
+        return agency.model_dump() if agency else None

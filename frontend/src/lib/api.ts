@@ -124,6 +124,14 @@ export async function getAgencies(): Promise<Agency[]> {
   return apiFetch<Agency[]>('/api/v1/agencies/');
 }
 
+export async function getAgency(id: string): Promise<Agency> {
+  return apiFetch<Agency>(`/api/v1/agencies/${id}`);
+}
+
+export async function getListingsByAgency(agencyId: string): Promise<Listing[]> {
+  return apiFetch<Listing[]>(`/api/v1/listings/?agency_id=${agencyId}`);
+}
+
 export async function getCities(): Promise<{ data: City[] }> {
   return apiFetch<{ data: City[] }>('/api/v1/locations/cities');
 }

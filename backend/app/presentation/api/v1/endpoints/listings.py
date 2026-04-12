@@ -43,10 +43,11 @@ def get_listing_repo(db: Prisma = Depends(get_db)) -> PrismaListingRepository:
 @router.get("/", response_model=List[Dict[str, Any]])
 async def list_listings(
     page: int = 1,
+    agency_id: Optional[str] = None,
     repo: PrismaListingRepository = Depends(get_listing_repo),
 ):
     skip = (page - 1) * 24
-    return await repo.get_many(skip=skip, take=24)
+    return await repo.get_many(skip=skip, take=24, agency_id=agency_id)
 
 
 @router.get("/{listing_id}", response_model=Dict[str, Any])

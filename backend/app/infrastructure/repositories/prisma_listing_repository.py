@@ -24,8 +24,10 @@ class PrismaListingRepository:
         )
         return listing.model_dump() if listing else None
 
-    async def get_many(self, skip: int = 0, take: int = 24) -> List[dict]:
+    async def get_many(self, skip: int = 0, take: int = 24, agency_id: Optional[str] = None) -> List[dict]:
+        where = {"agencyId": agency_id} if agency_id else {}
         listings = await self.db.listing.find_many(
+            where=where,
             skip=skip,
             take=take,
             order={"createdAt": "desc"},
