@@ -10,16 +10,21 @@ export default function Header() {
   const pathname = usePathname();
   const { t, locale, setLocale } = useTranslation();
   const [scrolled, setScrolled] = useState(false);
-
-  // Pages with dark hero — logo should be white when scrolled (dark section goes behind sticky header)
-  const darkHeroPages = ['/agencies'];
-  const isDarkHero = darkHeroPages.includes(pathname) && scrolled;
+  const [pastHero, setPastHero] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 12);
+      setPastHero(y > 370); // past the dark hero section
+    };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // White text only while the dark hero is scrolled behind the sticky header
+  const darkHeroPages = ['/agencies'];
+  const isDarkHero = darkHeroPages.includes(pathname) && scrolled && !pastHero;
 
   return (
     <motion.header
