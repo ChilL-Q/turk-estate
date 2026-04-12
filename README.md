@@ -1,38 +1,38 @@
 # TurkEstate — B2B PropTech Platform
 
-Закрытая B2B-платформа для турецкого рынка недвижимости. Соединяет верифицированные агентства, застройщиков и риелторов с международными покупателями. Каждый участник проходит проверку по VKN (налоговый номер) и TTYB (государственная лицензия риелтора).
+A closed B2B marketplace for the Turkish real estate market. Connects verified agencies, developers, and independent realtors with international buyers. Every participant is vetted by VKN (tax number) and TTYB (government realtor license).
 
 ---
 
-## Стек
+## Tech Stack
 
-| Слой | Технологии |
-|------|-----------|
+| Layer | Technologies |
+|-------|-------------|
 | Frontend | Next.js 14 · TypeScript · Tailwind CSS · Framer Motion |
 | Backend | FastAPI · Hexagonal Architecture · Python 3.10 |
 | ORM | Prisma (async Python client) |
-| База данных | PostgreSQL |
-| Поиск | Elasticsearch 8.11 (турецкий анализатор + geo_point) |
-| Аутентификация | JWT (pyjwt, HS256, 24h TTL) |
-| Инфраструктура | Docker · docker-compose |
+| Database | PostgreSQL |
+| Search | Elasticsearch 8.11 (Turkish analyzer + geo_point) |
+| Auth | JWT (pyjwt, HS256, 24h TTL) |
+| Infrastructure | Docker · docker-compose |
 
 ---
 
-## Возможности
+## Features
 
-- **Каталог агентств** — три типа организаций: Агентства недвижимости, Компании-застройщики, Частные риелторы. Верификация по TTYB.
-- **Листинги** — CRUD с синхронизацией в Elasticsearch. Фильтры: тип объекта, комнаты, цена, İskan, гражданство.
-- **Умный поиск** — полнотекстовый поиск с турецким морфологическим анализатором и геопространственными запросами.
-- **Карта объектов** — Leaflet с динамической загрузкой (SSR-safe).
-- **WhatsApp deeplink** — связь с агентом напрямую из карточки объекта.
-- **B2B Дашборд** — рабочее пространство агентства для управления листингами.
-- **Мультиязычность** — RU / EN / TR.
+- **Agency Catalog** — three organization types: Real Estate Agencies, Developers, Independent Realtors. TTYB license verification.
+- **Listings** — full CRUD with Elasticsearch sync. Filters: property type, rooms, price, İskan, citizenship eligibility.
+- **Smart Search** — full-text search with Turkish morphological analyzer and geospatial queries.
+- **Property Map** — Leaflet with dynamic loading (SSR-safe).
+- **WhatsApp Deeplink** — contact the agent directly from the property card.
+- **B2B Dashboard** — agency workspace for managing listings.
+- **Multilingual** — RU / EN / TR.
 
 ---
 
-## Локальный запуск
+## Getting Started
 
-### 1. Инфраструктура (PostgreSQL + Elasticsearch)
+### 1. Infrastructure (PostgreSQL + Elasticsearch)
 
 ```bash
 docker-compose up -d
@@ -46,16 +46,16 @@ python3 -m venv venv
 source venv/bin/activate
 pip install fastapi uvicorn prisma pydantic elasticsearch pydantic-settings pyjwt bcrypt aiohttp
 
-# Скопируй и настрой переменные окружения
+# Copy and configure environment variables
 cp .env.example .env
 
-# Применить схему к базе данных
+# Apply schema to database
 prisma db push
 
-# Заполнить тестовыми данными (4 города, 6 агентств, 10 объектов)
+# Seed with sample data (4 cities, 6 agencies, 10 listings)
 python -m scripts.seed
 
-# Запустить сервер
+# Start the server
 uvicorn app.main:app --reload --port 8000
 ```
 
@@ -65,7 +65,7 @@ uvicorn app.main:app --reload --port 8000
 cd frontend
 npm install
 
-# Скопируй переменные окружения
+# Copy environment variables
 cp .env.local.example .env.local
 
 npm run dev  # http://localhost:3001
@@ -73,7 +73,7 @@ npm run dev  # http://localhost:3001
 
 ---
 
-## Структура проекта
+## Project Structure
 
 ```
 turk-estate/
@@ -87,7 +87,7 @@ turk-estate/
 │   ├── prisma/
 │   │   └── schema.prisma
 │   └── scripts/
-│       └── seed.py         # тестовые данные
+│       └── seed.py         # sample data
 └── frontend/
     ├── src/
     │   ├── app/            # Next.js App Router pages
@@ -95,30 +95,30 @@ turk-estate/
     │   ├── context/        # LanguageContext (i18n)
     │   ├── i18n/           # ru.json, en.json, tr.json
     │   └── lib/
-    │       └── api.ts      # API-клиент
+    │       └── api.ts      # API client
     └── tailwind.config.ts
 ```
 
 ---
 
-## API
+## API Reference
 
-База: `http://localhost:8000/api/v1`
+Base URL: `http://localhost:8000/api/v1`
 
-| Метод | Путь | Описание |
-|-------|------|----------|
-| `POST` | `/auth/login` | JWT-аутентификация |
-| `GET` | `/agencies/` | Список агентств |
-| `POST` | `/agencies/register` | Регистрация агентства (VKN + TTYB) |
-| `GET` | `/listings/` | Список объектов |
-| `GET` | `/listings/{id}` | Карточка объекта |
-| `POST` | `/listings/` | Создать объект (auth required) |
-| `GET` | `/search/listings` | Поиск через Elasticsearch |
-| `GET` | `/address/cities` | Список городов |
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/auth/login` | JWT authentication |
+| `GET` | `/agencies/` | List agencies |
+| `POST` | `/agencies/register` | Register agency (VKN + TTYB) |
+| `GET` | `/listings/` | List properties |
+| `GET` | `/listings/{id}` | Property detail |
+| `POST` | `/listings/` | Create listing (auth required) |
+| `GET` | `/search/listings` | Search via Elasticsearch |
+| `GET` | `/address/cities` | List cities |
 
 ---
 
-## Переменные окружения
+## Environment Variables
 
 **backend/.env**
 ```env
