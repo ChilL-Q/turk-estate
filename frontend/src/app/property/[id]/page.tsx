@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 import { type Listing, formatPrice, getListingLocation, getListing } from '../../../lib/api';
 import { getListingImage } from '../../../lib/listingImages';
 
@@ -134,14 +133,11 @@ export default function PropertyDetailsPage() {
             variants={fadeUp}
             className="w-full h-[420px] md:h-[500px] rounded-2xl relative overflow-hidden border border-slate-200 cursor-pointer group shadow-sm"
           >
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={getListingImage(listing.id, listing.propertyType)}
               alt={listing.title}
-              fill
-              unoptimized
-              priority
-              className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-              sizes="(max-width: 1024px) 100vw, 66vw"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
             />
 
             {listing.vatandasligaUygun && (
