@@ -1,0 +1,14 @@
+{
+  "name": "turkestate",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=frontend",
+    "build": "npm run build --workspace=packages/api-client && npm run build --workspace=frontend",
+    "lint": "npm run lint --workspace=frontend"
+  }
+}
