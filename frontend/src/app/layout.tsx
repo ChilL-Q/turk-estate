@@ -4,7 +4,6 @@ import "./globals.css";
 
 import { LanguageProvider } from '../context/LanguageContext';
 import Header from '../components/Header';
-import PageTransition from '../components/PageTransition';
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -32,9 +31,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <LanguageProvider>
           <Header />
-          <PageTransition>
-            {children}
-          </PageTransition>
+          {children}
         </LanguageProvider>
       </body>
     </html>
