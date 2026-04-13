@@ -86,3 +86,4 @@ api.client.setToken(session.access_token);
 ## Правила работы с git
 
 - **При любом коммите и пуше — сразу мерджить все worktree-ветки в main и пушить.** Не оставлять изменения только в worktree.
+- **Никогда не добавлять Co-Authored-By и любые упоминания Claude в коммиты.**
