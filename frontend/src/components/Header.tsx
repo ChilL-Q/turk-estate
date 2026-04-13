@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { motion } from 'framer-motion';
 import { useTranslation } from '../context/LanguageContext';
 
 export default function Header() {
@@ -27,10 +26,7 @@ export default function Header() {
   const isDarkHero = darkHeroPages.includes(pathname) && scrolled && !pastHero;
 
   return (
-    <motion.header
-      initial={{ y: -64, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
+    <header
       className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled
           ? 'bg-white/96 backdrop-blur-xl shadow-soft border-b border-slate-200'
@@ -102,6 +98,6 @@ export default function Header() {
           </Link>
         </div>
       </div>
-    </motion.header>
+    </header>
   );
 }

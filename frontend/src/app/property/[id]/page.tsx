@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
-import Header from '../../../components/Header';
 import { type Listing, formatPrice, getListingLocation, getListing } from '../../../lib/api';
 
 const PropertyMap = dynamic(() => import('../../../components/PropertyMap'), { ssr: false });

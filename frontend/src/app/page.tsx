@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from '../context/LanguageContext';
-import Header from '../components/Header';
 import { type Listing, formatPrice, getListingLocation, getListings, searchListings } from '../lib/api';
 
 // ─── Animation variants ───────────────────────────────────────────────────────
@@ -213,7 +212,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-brand-light font-[family-name:var(--font-geist-sans)] selection:bg-brand-blue/20">
-      <Header />
 
       {/* ── Hero ──────────────────────────────────────────────────────────────── */}
       <section className="relative w-full pt-14 pb-20 px-4 flex flex-col items-center overflow-hidden">

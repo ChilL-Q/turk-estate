@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import Header from '../../components/Header';
 import { useTranslation } from '../../context/LanguageContext';
 import { type Agency, type AgencyType, getAgencies } from '../../lib/api';
 
@@ -191,7 +190,6 @@ export default function AgenciesPage() {
 
   return (
     <div className="min-h-screen bg-brand-light font-[family-name:var(--font-geist-sans)] selection:bg-brand-blue/20">
-      <Header />
 
       {/* ── Hero ──────────────────────────────────────────────────────────────── */}
       <section className="relative bg-brand-dark text-white py-16 px-6 overflow-hidden">
