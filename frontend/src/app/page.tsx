@@ -4,7 +4,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from '../context/LanguageContext';
+import Image from 'next/image';
 import { type Listing, formatPrice, getListingLocation, getListings, searchListings } from '../lib/api';
+import { getListingImage } from '../lib/listingImages';
 
 // ─── Animation variants ───────────────────────────────────────────────────────
 const fadeUp = {
@@ -72,8 +74,14 @@ function PropertyCard({ listing, t }: { listing: Listing; t: (k: string) => stri
           <div className="absolute top-3 right-3 bg-white/85 backdrop-blur-sm text-brand-dark border border-white/60 text-[10px] font-bold px-2.5 py-1 rounded-full z-10 tracking-wide shadow-sm">
             {listing.propertyType}
           </div>
-          <div className="w-full h-full bg-gradient-to-br from-slate-200 via-slate-100 to-blue-50 group-hover:scale-105 transition-transform duration-700 ease-out" />
-          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/10 to-transparent" />
+          <Image
+            src={getListingImage(listing.id, listing.propertyType)}
+            alt={listing.title}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+          />
+          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/20 to-transparent" />
         </div>
 
         <div className="p-5 flex-1 flex flex-col">
