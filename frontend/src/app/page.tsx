@@ -214,7 +214,7 @@ export default function Home() {
     <div className="min-h-screen bg-brand-light font-[family-name:var(--font-geist-sans)] selection:bg-brand-blue/20">
 
       {/* ── Hero ──────────────────────────────────────────────────────────────── */}
-      <section className="relative w-full pt-14 pb-20 px-4 flex flex-col items-center overflow-hidden">
+      <section className="relative w-full pt-20 pb-20 px-4 flex flex-col items-center overflow-hidden">
         <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
           <div className="blob blob-delay-0 absolute -top-24 left-1/4 w-[520px] h-[520px] rounded-full bg-blue-100/60 blur-3xl" />
           <div className="blob blob-delay-2 absolute top-10 right-1/4 w-[380px] h-[380px] rounded-full bg-indigo-100/50 blur-3xl" />
