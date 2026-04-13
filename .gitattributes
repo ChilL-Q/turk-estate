@@ -1,0 +1,8 @@
+# Tell GitHub Linguist to treat these correctly
+*.prisma linguist-language=Prisma
+
+# Exclude generated/vendor files from language stats
+frontend/node_modules/ linguist-vendored
+backend/venv/ linguist-vendored
+.claude/ linguist-vendored
+packages/api-client/dist/ linguist-generated
