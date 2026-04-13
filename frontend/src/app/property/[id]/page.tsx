@@ -138,9 +138,10 @@ export default function PropertyDetailsPage() {
               src={getListingImage(listing.id, listing.propertyType)}
               alt={listing.title}
               fill
+              unoptimized
+              priority
               className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
               sizes="(max-width: 1024px) 100vw, 66vw"
-              priority
             />
 
             {listing.vatandasligaUygun && (

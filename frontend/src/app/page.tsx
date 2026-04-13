@@ -78,6 +78,7 @@ function PropertyCard({ listing, t }: { listing: Listing; t: (k: string) => stri
             src={getListingImage(listing.id, listing.propertyType)}
             alt={listing.title}
             fill
+            unoptimized
             className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
           />
