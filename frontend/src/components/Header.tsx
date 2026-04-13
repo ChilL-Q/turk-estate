@@ -54,17 +54,17 @@ export default function Header() {
               pathname === '/' ? 'text-brand-blue font-bold' : isDarkHero ? 'hover:text-white' : 'hover:text-brand-blue'
             }`}>
               {t('nav.properties')}
-              {pathname === '/' && (
-                <motion.span layoutId="nav-underline" className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-brand-blue rounded-full" />
-              )}
+              <span className={`absolute bottom-0 left-0 right-0 h-[2.5px] bg-brand-blue rounded-full transition-all duration-300 ${
+                pathname === '/' ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'
+              }`} />
             </Link>
             <Link href="/agencies" className={`h-full flex items-center transition-colors relative ${
               pathname === '/agencies' ? 'text-brand-blue font-bold' : isDarkHero ? 'hover:text-white' : 'hover:text-brand-blue'
             }`}>
               {t('nav.agencies')}
-              {pathname === '/agencies' && (
-                <motion.span layoutId="nav-underline" className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-brand-blue rounded-full" />
-              )}
+              <span className={`absolute bottom-0 left-0 right-0 h-[2.5px] bg-brand-blue rounded-full transition-all duration-300 ${
+                pathname === '/agencies' ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'
+              }`} />
             </Link>
           </nav>
         </div>
